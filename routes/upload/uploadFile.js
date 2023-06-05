@@ -4,21 +4,17 @@ const { db } = require("../../config/firebase")
 
 module.exports = async (req, res, next) => {
 
+    // check if there is expiry or not in the body
     if (req.body.expiry === undefined || req.body.expiry.length === 0) {
         return res.status(400).send({
             message : "Expiry is required"
         });
     }
 
+    // check if there is iv or not in thr body
     if (req.body.iv === undefined || req.body.iv.length === 0) {
         return res.status(400).send({
             message : "iv is required"
-        });
-    }
-
-    if (req.body.orgName === undefined || req.body.orgName.length == 0) {
-        return res.status(400).send({
-            message : "orgName is required"
         });
     }
 
@@ -28,18 +24,32 @@ module.exports = async (req, res, next) => {
     const file = req.file;
     const timeStamp = Date.now();
     const nt = file.originalname.split(".");
-    const name = nt[0];
-    const type = nt[1];
+
+    // filename and type identifing
+    var name = nt[0];
+    for (let i=1; i < nt.length-1; i++) {
+        name += ("." + nt[i])
+    }
+    const type = nt[nt.length-1];
 
     const filename = name + "_" + timeStamp + "." + type;
+
+    // Step 1 : Upload file to firebase storage
+
+    // firebase bucket ref
     const imageRef = ref(storage, "files/" + filename);
     const metaData = {
         contentType : file.mimetype
     }
 
     try{
+        // upload to firebase
         const snapshot = await uploadBytes(imageRef, file.buffer, metaData);
+
+        // get downloadurl from snapshot
         url = await getDownloadURL(snapshot.ref);
+
+        // get the filePath
         path = snapshot.ref.fullPath
     }catch(e){
         return res.status(400).send({
@@ -47,7 +57,12 @@ module.exports = async (req, res, next) => {
         })
     };
 
+    // Step 2 : Save data to firestore
+
+    // firestore collection ref
     const docRef = db.collection('files');
+
+    // add new doc
     const newDoc = docRef.doc();
 
     const data = {
@@ -59,11 +74,13 @@ module.exports = async (req, res, next) => {
     };
 
     await newDoc.set(data).then((result) => {
+        // doc added
         return res.status(200).send({
             searchKey : newDoc.id,
             expiry : req.body.expiry
         })
     }).catch(err => {
+        // error adding doc
         console.log(err);
         return res.status(400).send({
             message : "DB Error"
