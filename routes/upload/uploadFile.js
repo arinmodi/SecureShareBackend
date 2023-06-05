@@ -1,19 +1,6 @@
 const { ref, getDownloadURL } = require('firebase/storage');
 const { storage, uploadBytes } = require('../../config/firebase');
 const { db } = require("../../config/firebase")
-const crypto = require('crypto');
-
-function generateRandomString(length) {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-
-  for (let i = 0; i < length; i++) {
-    const randomIndex = crypto.randomInt(0, characters.length);
-    result += characters.charAt(randomIndex);
-  }
-
-  return result;
-}
 
 module.exports = async (req, res, next) => {
 
@@ -23,7 +10,20 @@ module.exports = async (req, res, next) => {
         });
     }
 
+    if (req.body.iv === undefined || req.body.iv.length === 0) {
+        return res.status(400).send({
+            message : "iv is required"
+        });
+    }
+
+    if (req.body.orgName === undefined || req.body.orgName.length == 0) {
+        return res.status(400).send({
+            message : "orgName is required"
+        });
+    }
+
     let url = "";
+    let path = "";
 
     const file = req.file;
     const timeStamp = Date.now();
@@ -40,6 +40,7 @@ module.exports = async (req, res, next) => {
     try{
         const snapshot = await uploadBytes(imageRef, file.buffer, metaData);
         url = await getDownloadURL(snapshot.ref);
+        path = snapshot.ref.fullPath
     }catch(e){
         return res.status(400).send({
             error : e
@@ -49,19 +50,18 @@ module.exports = async (req, res, next) => {
     const docRef = db.collection('files');
     const newDoc = docRef.doc();
 
-    const deletionKey = generateRandomString(10);
-
     const data = {
-        url : url,
+        url : decodeURI(url),
         expiry : req.body.expiry,
-        deletionKey : deletionKey
+        path : path,
+        name : filename,
+        iv : req.body.iv
     };
 
     await newDoc.set(data).then((result) => {
         return res.status(200).send({
-            url : url,
             searchKey : newDoc.id,
-            deletionKey : deletionKey
+            expiry : req.body.expiry
         })
     }).catch(err => {
         console.log(err);
