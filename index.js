@@ -29,10 +29,13 @@ const server = http.createServer(app);
 
 // download service account file from provided url
 const downloadFile = () => {
-	const path = "./secret/key.json";
+	let path = "./secret/key.json";
+	if (process.env.NODE_ENV === "PROD") {
+		path = "tmp/key.json"
+	}
 	const url = process.env.FIREBASE_SERVICE_FILE
 
-	console.log(Apath.resolve("./secret/key.json"))
+	console.log(Apath.resolve(path))
 
 	if (process.env.NODE_ENV === "TEST") return;
 
