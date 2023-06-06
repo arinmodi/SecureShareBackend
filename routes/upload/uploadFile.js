@@ -2,6 +2,12 @@ const { ref, getDownloadURL } = require('firebase/storage');
 const { storage, uploadBytes } = require('../../config/firebase');
 const { db } = require("../../config/firebase")
 
+/*
+    Contoller for file upload,
+
+    Step 1 : Save File to Storage and Get The Doewnload URL
+    Step 2 : Save the data to firestore
+*/
 module.exports = async (req, res, next) => {
 
     // check if there is expiry or not in the body

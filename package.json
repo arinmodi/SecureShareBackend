@@ -4,7 +4,8 @@
   "description": "Backend For Secure Tarnsfer File App",
   "main": "index.js",
   "scripts": {
-    "test": "npm run test"
+    "start": "node index.js",
+    "test": "set NODE_ENV=TEST&& mocha tests --recursive --timeout 15000 --exit1"
   },
   "keywords": [
     "File",
@@ -27,6 +28,7 @@
     "firebase-admin": "^11.9.0",
     "http": "0.0.1-security",
     "joi": "^17.9.2",
+    "mocha": "^10.2.0",
     "multer": "^1.4.5-lts.1"
   }
 }

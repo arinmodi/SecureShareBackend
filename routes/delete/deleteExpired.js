@@ -1,6 +1,7 @@
 const { db } = require("../../config/firebase")
 const { ref, deleteObject } = require('firebase/storage');
 const { storage } = require('../../config/firebase');
+require("dotenv").config()
 
 /*
     Controller For Delete Expired File : Delete File data from firestore and then
@@ -11,6 +12,10 @@ const { storage } = require('../../config/firebase');
     Step 1 : Firestore Doc Filtering
     Step 2 : For each delete it from fiestore and store the it's path in the array
     Step 3 : For each path in the array delete it from storage
+
+    Note : 
+    For Debug and Production Mode, we are comparing today's date
+    For Test mode, we are comparig with 05-05-1965
 */
 module.exports = async (req, res, next) => {
     try {
@@ -20,8 +25,15 @@ module.exports = async (req, res, next) => {
     //todays date
     const date = new Date()
 
-    const formattedDate = formatData(date.getDate()) + "-" + formatData(date.getMonth() + 1) 
+    let formattedDate = formatData(date.getDate()) + "-" + formatData(date.getMonth() + 1) 
     + "-" + date.getFullYear();
+
+    console.log(process.env.NODE_ENV)
+
+    if (process.env.NODE_ENV === "TEST") {
+        console.log("true")
+        formattedDate = "05-05-1965"
+    }
 
     console.log(formattedDate)
 
