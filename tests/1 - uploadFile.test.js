@@ -2,18 +2,21 @@ const chai = require("chai")
 const chaiHttp = require("chai-http")
 const server = require("../index")
 const fs = require("fs")
+const intilize = require("../intilize")
+
+before(intilize)
 
 chai.use(chaiHttp)
 
 const { expect } = chai;
-
 /*
     Testing File Upload Feature
 */
 describe("Testing Uplad File Feature : ", () => {
 
     it ("1. Test Upload File Post API at upload/file", (done) => {
-        const pathToAssetFile = "D:/Personal Projects/SecureFileTransfer/SecureFileTransferBackend/assets/demo.jpg"
+        // your path to the file
+        const pathToAssetFile = process.env.IMAGE_FILE_PATH
 
         chai
             .request(server)

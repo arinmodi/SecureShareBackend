@@ -1,4 +1,4 @@
-const { db } = require("../../config/firebase")
+const admin = require("firebase-admin")
 const { ref, deleteObject } = require('firebase/storage');
 const { storage } = require('../../config/firebase');
 
@@ -11,6 +11,8 @@ const { storage } = require('../../config/firebase');
     Step 3 : Storage Deletion
 */
 module.exports = async (req, res, next) => {
+
+    const db = admin.firestore()
 
     // searchKey : id of the doc in collection to be deleted
     const docRef = db.collection('files').doc(req.body.searchKey);

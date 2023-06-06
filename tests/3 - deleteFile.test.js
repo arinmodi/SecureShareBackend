@@ -15,7 +15,7 @@ describe("Testing Delete File Feature : ", () => {
     let searchKey = ""
 
     it ("1. Test Upload File Post API at /upload/file", (done) => {
-        const pathToAssetFile = "D:/Personal Projects/SecureFileTransfer/SecureFileTransferBackend/assets/demo.jpg"
+        const pathToAssetFile = process.env.IMAGE_FILE_PATH
 
         chai
             .request(server)

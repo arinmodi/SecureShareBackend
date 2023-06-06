@@ -1,6 +1,7 @@
-const { db } = require("../../config/firebase")
+const admin = require("firebase-admin")
 const { ref, deleteObject } = require('firebase/storage');
 const { storage } = require('../../config/firebase');
+
 require("dotenv").config()
 
 /*
@@ -19,63 +20,66 @@ require("dotenv").config()
 */
 module.exports = async (req, res, next) => {
     try {
-    // collection ref
-    const collectionRef = db.collection('files');
 
-    //todays date
-    const date = new Date()
+        const db = admin.firestore()
 
-    let formattedDate = formatData(date.getDate()) + "-" + formatData(date.getMonth() + 1) 
-    + "-" + date.getFullYear();
+        // collection ref
+        const collectionRef = db.collection('files');
 
-    console.log(process.env.NODE_ENV)
+        //todays date
+        const date = new Date()
 
-    if (process.env.NODE_ENV === "TEST") {
-        console.log("true")
-        formattedDate = "05-05-1965"
-    }
+        let formattedDate = formatData(date.getDate()) + "-" + formatData(date.getMonth() + 1) 
+        + "-" + date.getFullYear();
 
-    console.log(formattedDate)
+        console.log(process.env.NODE_ENV)
+
+        if (process.env.NODE_ENV === "TEST") {
+            console.log("true")
+            formattedDate = "05-05-1965"
+        }
+
+        console.log(formattedDate)
 
 
-    // Step 1 : filter the docs and get the docs
-    const docRef = collectionRef.where("expiry", "==", formattedDate)
-    const result = await docRef.get()
+        // Step 1 : filter the docs and get the docs
+        const docRef = collectionRef.where("expiry", "==", formattedDate)
+        const result = await docRef.get()
 
-    // Step 2 : Delete each doc and pushing paths to urls array
-    let urls = []
+        // Step 2 : Delete each doc and pushing paths to urls array
+        let urls = []
 
-    result.forEach(async (element) => {
-        const data = element.data();
+        result.forEach(async (element) => {
+            const data = element.data();
 
-        // psuh path to the array
-        urls.push(data.path)
+            // psuh path to the array
+            urls.push(data.path)
 
-        // delete the doc
-        await collectionRef.doc(element.id).delete()
-    });
+            // delete the doc
+            await collectionRef.doc(element.id).delete()
+        });
 
-    if (urls.length == 0) {
-        return res.status(200).send({
-            message : "No Expired Files Found"
+        if (urls.length == 0) {
+            return res.status(200).send({
+                message : "No Expired Files Found"
+            })
+        }
+
+        // Step 3 : Delete form stoarge
+
+        urls.forEach(async (path) => {
+            // storage ref
+            const storageRef = ref(storage, path);
+
+            // deleting storage ref
+            await deleteObject(storageRef)
         })
-    }
 
-    // Step 3 : Delete form stoarge
+        console.log("Delete Count : " + urls.length)
 
-    urls.forEach(async (path) => {
-        // storage ref
-        const storageRef = ref(storage, path);
-
-        // deleting storage ref
-        await deleteObject(storageRef)
-    })
-
-    console.log("Delete Count : " + urls.length)
-
-    return res.status(200).send({
-        count : urls.length
-    })
+        return res.status(200).send({
+            count : urls.length
+        })
 
     } catch(error) {
         console.log(error)

@@ -1,9 +1,11 @@
-const { db } = require("../../config/firebase")
+const admin = require("firebase-admin")
 
 /*
     Controller Get File Related Data from firestore
 */
 module.exports = async (req, res, next) => {
+
+    const db = admin.firestore()
     
     // searchKey : Doc id in firestore collection
 

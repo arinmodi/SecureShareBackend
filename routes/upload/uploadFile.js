@@ -1,6 +1,6 @@
 const { ref, getDownloadURL } = require('firebase/storage');
 const { storage, uploadBytes } = require('../../config/firebase');
-const { db } = require("../../config/firebase")
+const admin = require("firebase-admin")
 
 /*
     Contoller for file upload,
@@ -9,6 +9,8 @@ const { db } = require("../../config/firebase")
     Step 2 : Save the data to firestore
 */
 module.exports = async (req, res, next) => {
+
+    const db = admin.firestore()
 
     // check if there is expiry or not in the body
     if (req.body.expiry === undefined || req.body.expiry.length === 0) {
