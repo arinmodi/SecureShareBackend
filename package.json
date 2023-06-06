@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "dev" : "node index.js",
     "test": "set NODE_ENV=TEST&& mocha tests --recursive --timeout 15000 --exit1"
   },
   "keywords": [
