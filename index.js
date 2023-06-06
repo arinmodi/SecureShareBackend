@@ -2,6 +2,7 @@ const chalk = require("chalk");
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
+const Apath = require("path")
 
 require("dotenv").config();
 const app = require("./app");
@@ -30,6 +31,8 @@ const server = http.createServer(app);
 const downloadFile = () => {
 	const path = "./secret/key.json";
 	const url = process.env.FIREBASE_SERVICE_FILE
+
+	console.log(Apath.resolve("./secret/key.json"))
 
 	if (process.env.NODE_ENV === "TEST") return;
 
