@@ -2,9 +2,6 @@ const chai = require("chai")
 const chaiHttp = require("chai-http")
 const server = require("../index")
 const fs = require("fs")
-const intilize = require("../intilize")
-
-before(intilize("./secret/key.json"))
 
 chai.use(chaiHttp)
 

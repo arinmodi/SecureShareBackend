@@ -60,6 +60,7 @@ module.exports = async (req, res, next) => {
         // get the filePath
         path = snapshot.ref.fullPath
     }catch(e){
+        console.log(e)
         return res.status(400).send({
             error : e
         })
