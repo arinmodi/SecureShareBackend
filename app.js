@@ -1,10 +1,11 @@
 const express = require("express");
 const cors = require("cors");
-const app = express();
 const bodyParser = require("body-parser");
 
 const routes = require("./routes");
 const { errorHandler } = require("./helpers/error");
+
+const app = express();
 
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
