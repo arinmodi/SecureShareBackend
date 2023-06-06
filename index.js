@@ -31,7 +31,7 @@ const server = http.createServer(app);
 const downloadFile = () => {
 	let path = "./secret/key.json";
 	if (process.env.NODE_ENV === "PROD") {
-		path = "tmp/key.json"
+		path = "./tmp/key.json"
 	}
 	const url = process.env.FIREBASE_SERVICE_FILE
 
@@ -51,7 +51,7 @@ const downloadFile = () => {
 		file.on('finish', () => {
 			file.close(() => {
 			console.log('File downloaded successfully!');
-			intilize()
+			intilize(path)
 			});
 		});
 		}).on('error', (err) => {
@@ -60,7 +60,7 @@ const downloadFile = () => {
 			});
 		});
 	} else {
-		intilize()
+		intilize(path)
 	}
 } 
 

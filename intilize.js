@@ -1,7 +1,7 @@
 const admin = require("firebase-admin")
 
-module.exports =  () => {
-    const serviceAccount = require("./secret/key.json");
+module.exports =  (path) => {
+    const serviceAccount = require(path);
 
 	admin.initializeApp({
 		credential: admin.credential.cert(serviceAccount)
