@@ -62,5 +62,3 @@ npm run test
 
 <br>
 3. Once test passed, you are good to start making changes. Make sure to make changes in the branch other than master and make a pr.
-
-### ⚠️ (Warning): Before commiting any changes please reset the value of the .env file, otherwise your private key may get exposed.
