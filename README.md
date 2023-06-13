@@ -1,4 +1,4 @@
-# Note For Developers:
+# Note:
 - Android App code available at [HERE](https://github.com/arinmodi/SecureFileTransfer)
 
 <br>
